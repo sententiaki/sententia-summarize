@@ -1,0 +1,11 @@
+Sententia Summarize
+Copyright 2026 Sententia
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The name "Sententia" is not licensed for use beyond reasonably describing the
+origin of this work (see section 6 of the License).
+
+Data: this plugin does not contain court decisions. It queries third-party
+services (OpenCaseLaw and the entscheidsuche.ch association). Their terms of use
+apply independently of this license.

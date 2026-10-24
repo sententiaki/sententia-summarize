@@ -1,0 +1,11 @@
+{
+  "name": "sententia-summarize",
+  "version": "0.1.0",
+  "description": "Riconosce riferimenti a sentenze svizzere scritti in linguaggio naturale (es. 'riassumi 115 II 15') e restituisce un riassunto in 4 punti fissi: fattispecie, articoli principali citati, considerandi principali, conclusioni. Nessuna configurazione richiesta.",
+  "author": {
+    "name": "Sententia"
+  },
+  "license": "Apache-2.0",
+  "privacyPolicyUrl": "https://github.com/sententiaki/sententia-summarize#privacy",
+  "repository": "https://github.com/sententiaki/sententia-summarize"
+}

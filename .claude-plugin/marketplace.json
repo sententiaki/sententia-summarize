@@ -1,0 +1,14 @@
+{
+  "name": "sententia-summarize",
+  "description": "Plugin gratuito per Claude per lavorare con le sentenze svizzere: riassunto, considerando preciso, verifica di un'affermazione.",
+  "owner": {
+    "name": "Sententia"
+  },
+  "plugins": [
+    {
+      "name": "sententia-summarize",
+      "source": "./",
+      "description": "Riassume sentenze svizzere, cita un considerando preciso e verifica se una sentenza sostiene davvero un'affermazione. Gratuito, nessuna configurazione."
+    }
+  ]
+}

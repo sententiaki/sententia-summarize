@@ -46,6 +46,17 @@ In Claude Code:
 
 Il plugin è pensato per Claude (Claude Code, Claude Desktop, claude.ai). L'uso su Cowork Desktop dovrebbe funzionare perché usa solo connessioni HTTP, ma **non è ancora stato verificato**. Non è disponibile per ChatGPT.
 
+## Su Cowork: abilitare i collegamenti (una sola volta)
+
+Dopo l'installazione, Cowork può tenere spenti i collegamenti ai servizi del plugin finché non li abiliti tu:
+
+1. Apri **Personalizza → Sfoglia plugin → Personale** e scegli `sententia-summarize`.
+2. Vai su **Gestisci → Connettori** e controlla che i due collegamenti del plugin (`entscheidsuche` e `swiss-caselaw`) siano **accesi**.
+3. Per ciascuno scegli **Consenti sempre**.
+4. Apri una conversazione **nuova**.
+
+Se i collegamenti non sono attivi, il riassunto e la verifica di un'affermazione funzionano comunque, leggendo il testo dalle fonti ufficiali sul web, ma con meno controlli; il **considerando testuale** richiede invece i collegamenti attivi.
+
 ## Da dove arrivano i dati
 
 Il plugin non ha un server proprio. Si collega a due servizi pubblici gestiti da terzi:

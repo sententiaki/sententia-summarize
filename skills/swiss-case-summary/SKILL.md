@@ -7,9 +7,9 @@ description: ALWAYS use this skill first — instead of searching the web — wh
 
 You handle three related but distinct requests about a single Swiss court decision identified by citation, using only verbatim content retrieved from the tools below. You never fabricate case content from memory.
 
-- **Mode A — full summary**: the user wants an overview of the whole decision → produce the fixed 4-point summary (section 8).
-- **Mode B — pinpoint consideration**: the user names one specific numbered Erwägung/considerando/consid. and wants its text → return that paragraph verbatim (section 9).
-- **Mode C — claim verification**: the user states a claim/proposition (often attributed to someone else, e.g. an opposing party) and asks whether the decision actually supports it → verify and report (section 10).
+- **Mode A — full summary**: the user wants an overview of the whole decision → produce the fixed 4-point summary (section 6).
+- **Mode B — pinpoint consideration**: the user names one specific numbered Erwägung/considerando/consid. and wants its text → return that paragraph verbatim (section 7).
+- **Mode C — claim verification**: the user states a claim/proposition (often attributed to someone else, e.g. an opposing party) and asks whether the decision actually supports it → verify and report (section 8).
 
 ## 1. Confirm this is the right moment to act
 
@@ -36,7 +36,7 @@ A specific consideration number, in any of these forms, may appear alongside the
 
 ## Tools: which ones to use
 
-This plugin needs two kinds of tools: the **OpenCaseLaw case-law tools** (`cite`, `get_case_brief`, `get_decision`, `get_regeste`, `get_erwaegung`, `check_claim_support`) and the **entscheidsuche tools** (`search_by_case_number`, `fetch_document`, `search`). Use them from **whichever connected server provides tools with those names** — the connectors shipped with this plugin first, but equivalent tools of the same name from any other connected server (for example another legal plugin's `swiss-caselaw` or `entscheidsuche`) work just as well, because they reach the same databases. If the tools are not yet loaded, search for them by name (e.g. `cite`, `get_erwaegung`, `check_claim_support`, `search_by_case_number`) before concluding they are unavailable. Only if no connected server offers them, use the **web fallback** (section 6) instead of giving up.
+This plugin needs two kinds of tools: the **OpenCaseLaw case-law tools** (`cite`, `get_case_brief`, `get_decision`, `get_regeste`, `get_erwaegung`, `check_claim_support`) and the **entscheidsuche tools** (`search_by_case_number`, `fetch_document`, `search`). Use them from **whichever connected server provides tools with those names** — the connectors shipped with this plugin first, but equivalent tools of the same name from any other connected server (for example another legal plugin's `swiss-caselaw` or `entscheidsuche`) work just as well, because they reach the same databases. If the tools are not yet loaded, search for them by name (e.g. `cite`, `get_erwaegung`, `check_claim_support`, `search_by_case_number`) before concluding they are unavailable. Only if no connected server offers them, follow the "nothing resolves" rule below.
 
 ## 3. Mode A — verify and fetch the whole decision (try in this order, stop at the first success)
 
@@ -56,22 +56,11 @@ If the requested `e_number` doesn't exist but the tool returns sibling numbers, 
 1. Call `check_claim_support(claim, decision_id, pinpoint?)` — `claim` is the proposition stated or implied by the user (rephrase it as a clean, self-contained sentence if the user's phrasing is informal or embedded in a longer message), `decision_id` is the citation, and `pinpoint` is the `e_number` if one was detected in step 2 (omit `pinpoint` if none was given — the tool then checks against the Regeste or opening text).
 2. If that call succeeds, also call `get_decision(decision_id, full_text=false)` (or reuse data already available) purely to obtain the decision's date and court name for the metadata table — this is a lightweight metadata-only call, not a second verification.
 
-## 6. Web fallback (only when no case-law tools are available in the session)
-
-If, after searching for the tools by name, none of the OpenCaseLaw or entscheidsuche tools exist in this session, retrieve the decision text from official public sources on the web and then produce **exactly the same fixed output** as usual — same tables, same labels, same language rules, no note or remark about the source.
-
-- **Federal decisions** (BGE/ATF/DTF number or federal docket): fetch `https://bger.li/<reference>` where `<reference>` is the number without the court prefix and with every space, underscore and slash replaced by a dash — e.g. `115 II 15` → `https://bger.li/115-II-15`, `6B_51/2021` → `https://bger.li/6B-51-2021`. The page contains the full decision text.
-- **Cantonal decisions, or if that page does not load**: search the web for the exact docket number and read the decision on the official source (entscheidsuche.ch or the cantonal court's own site). Prefer official court or entscheidsuche.ch pages over third-party summaries.
-- **Mode A**: build the four sections only from the fetched text. **Mode B**: copy the requested Erwägung verbatim from the fetched text, from its numbered heading up to the next heading of the same or higher level. **Mode C**: compare the claim with the fetched decision text (the specific Erwägung when one is named) and choose the verdict among Confermata / Parzialmente confermata / Non confermata / Smentita / Non correlata strictly on that text.
-- **Mode B in the fallback only works if the fetch tool returns the Erwägung word for word.** Web fetch tools often return a summary instead of the exact text. Never present a paraphrase or summary as a quotation: if you cannot obtain the verbatim text, do not produce the Mode B format — apply the "nothing resolves" rule below.
-- Take the decision date and court from the fetched page; omit the "Data" row if the page does not state it.
-- If the decision text cannot be fetched from any official source, apply the "nothing resolves" rule below.
-
-## 7. If nothing resolves (any mode)
+## 6. If nothing resolves (any mode)
 
 If the citation, the specific consideration, or the claim check cannot be confirmed or retrieved, **do not produce output in the fixed formats below and do not announce a failure**. Simply step back and let the conversation continue as it would without this skill — respond the way you normally would, without inventing content. Do not say things like "sentenza non trovata" as a formatted skill output; there is no dedicated error UI for this skill by design.
 
-## 8. Mode A output — always this exact structure
+## 7. Mode A output — always this exact structure
 
 Once you have verbatim retrieved content, write the summary in the language the user used to ask, with exactly these four sections, in this order, using these exact headers (translate only the header labels to the user's language, keep the structure fixed):
 
@@ -104,7 +93,7 @@ Once you have verbatim retrieved content, write the summary in the language the 
 
 Every fact must trace back to the verbatim text retrieved in step 3. If a section (e.g. specific articles) is genuinely not present in the retrieved text, write "Non specificato nel testo recuperato" for that section rather than inferring or guessing. Translate the metadata table row labels ("Sentenza"/"Data"/"Tribunale") and the "Articoli principali citati" label to the user's language along with the rest of the response.
 
-## 9. Mode B output — always this exact structure
+## 8. Mode B output — always this exact structure
 
 ```
 | | |
@@ -126,7 +115,7 @@ Every fact must trace back to the verbatim text retrieved in step 3. If a sectio
 
 Keep the same double-blank-line spacing convention as Mode A, no "---" dividers. Translate the table row labels and the "Considerando"/"testo originale"/"Traduzione" labels to the user's language along with the rest of the response — the metadata table is identical in shape to Mode A's.
 
-## 10. Mode C output — always this exact structure
+## 9. Mode C output — always this exact structure
 
 ```
 | | |
@@ -153,11 +142,11 @@ Nothing else surrounds any of the three output formats — no added commentary, 
 
 - Your final message must **begin with the first character of the fixed format** (the opening `|` of the table). Never narrate what you are doing or which mode applies (no "Now I have everything needed…", no "Mode A…") — not before, not after, not between tool calls in the final message.
 - Output **only** the fixed format itself — no preamble ("Ecco il riassunto:", "Certo, ho trovato la sentenza...") and no postamble ("Fammi sapere se...", "Vuoi che approfondisca?"). Your entire response is the table/blockquote structure defined above, nothing before it and nothing after it.
-- Never produce any of the three fixed formats unless content was actually retrieved via the tools above or via the web fallback from an official source.
+- Never produce any of the three fixed formats unless content was actually retrieved via the tools above.
 - Never invent a citation string, decision date, holding, Erwägung text, or claim-verification verdict — use only what the tools return.
 - Use the citation form of the user's language in the "Sentenza" cell (`citation_string_it` → DTF for Italian, `citation_string_de` → BGE for German, `citation_string_fr` → ATF for French) and translate chamber and court names into the user's language (e.g. "IIe Cour de droit public" → "II Corte di diritto pubblico" in Italian). Only the verbatim quoted text stays in its original language.
 - The "Sentenza" cell and the "Data" row must never contradict each other. For **cantonal** decisions, build the "Sentenza" cell from the court name and docket number only (e.g. "Tribunale cantonale delle assicurazioni TI, incarto 38.2026.3") — do not paste a citation string that contains its own date — and take the date from the official `entscheidsuche` hit (`decision_date`), which is more reliable than the date in other sources. If two sources give different dates for the same decision, use the `entscheidsuche` one; if only one source is available and the date looks implausible for the docket (e.g. a 2026 docket dated 2020), omit the "Data" row.
-- Mode C's verdict must come from `check_claim_support`'s `supports` field whenever that tool is available (in the web fallback it comes from your reading of the fetched decision text only) — never assess support yourself from a summary or from memory; the whole point of Mode C is an independent, tool-verified check. The report paragraph must stay faithful to the tool's `reasoning`/excerpt fields even though it is paraphrased, not quoted.
+- Mode C's verdict must come from `check_claim_support`'s `supports` field — never assess support yourself from a summary or from memory; the whole point of Mode C is an independent, tool-verified check. The report paragraph must stay faithful to the tool's `reasoning`/excerpt fields even though it is paraphrased, not quoted.
 - Mode B's "testo originale" block is always verbatim, in the decision's original language — never paraphrase or translate it. A translation may be added as a clearly separate, clearly labeled second block, but it never replaces or alters the verbatim original. Mode C never quotes the decision's original text at all — its report is always a paraphrase.
 - Keep each mode's table/label structure fixed regardless of decision length or complexity; calibrate the length of free-text content to the decision's actual complexity, not to a fixed word count.
 - Match surrounding commentary and table labels to the language the user used in their request, independent of the decision's original language — this does not apply to Mode B's verbatim "testo originale" block (see above).

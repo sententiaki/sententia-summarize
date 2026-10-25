@@ -55,7 +55,7 @@ Dopo l'installazione, Cowork può tenere spenti i collegamenti ai servizi del pl
 3. Per ciascuno scegli **Consenti sempre**.
 4. Apri una conversazione **nuova**.
 
-Se i collegamenti non sono attivi, il riassunto e la verifica di un'affermazione funzionano comunque, leggendo il testo dalle fonti ufficiali sul web, ma con meno controlli; il **considerando testuale** richiede invece i collegamenti attivi.
+Se i collegamenti non sono attivi, il plugin **non risponde nel suo formato**: non produce mai un riassunto o una citazione che non abbia potuto verificare sulle fonti. Chi ha già OpenCaseLaw ed entscheidsuche collegati nel proprio account non deve fare altro: il plugin usa gli strumenti disponibili.
 
 ## Da dove arrivano i dati
 

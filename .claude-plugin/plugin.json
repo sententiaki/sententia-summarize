@@ -1,6 +1,6 @@
 {
   "name": "sententia-summarize",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Riconosce riferimenti a sentenze svizzere scritti in linguaggio naturale (es. 'riassumi 115 II 15') e restituisce un riassunto in 4 punti fissi: fattispecie, articoli principali citati, considerandi principali, conclusioni. Nessuna configurazione richiesta.",
   "author": {
     "name": "Sententia"

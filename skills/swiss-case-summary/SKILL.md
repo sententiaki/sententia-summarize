@@ -34,22 +34,26 @@ A specific consideration number, in any of these forms, may appear alongside the
 - No claim to verify, but an `e_number` is present → **Mode B**.
 - Neither a claim nor an `e_number` → **Mode A**.
 
+## Tools: which ones to use
+
+This plugin needs two kinds of tools: the **OpenCaseLaw case-law tools** (`cite`, `get_case_brief`, `get_decision`, `get_regeste`, `get_erwaegung`, `check_claim_support`) and the **entscheidsuche tools** (`search_by_case_number`, `fetch_document`, `search`). Use them from **whichever connected server provides tools with those names** — the connectors shipped with this plugin first, but equivalent tools of the same name from any other connected server (for example another legal plugin's `swiss-caselaw` or `entscheidsuche`) work just as well, because they reach the same databases. If the tools are not yet loaded, search for them by name (e.g. `cite`, `get_erwaegung`, `check_claim_support`, `search_by_case_number`) before concluding they are unavailable. Only if no connected server offers them, follow the "nothing resolves" rule below.
+
 ## 3. Mode A — verify and fetch the whole decision (try in this order, stop at the first success)
 
-1. **`swiss-caselaw` tools** (richest source, has built-in verification): call `cite` with the reference to confirm it exists and get the canonical citation string. If it resolves, call `get_case_brief` (or `get_decision` + `get_regeste` if `get_case_brief` is unavailable) to retrieve the actual facts, considerations, and holding.
-2. **`entscheidsuche` tools** (official Swiss court-decision search): if the reference looks cantonal, or step 1 did not resolve, call `search_by_case_number(case_number, size=1)` with the docket as given. Only accept a hit whose docket actually matches the one requested. The hit gives `abstract`, `decision_date`, `court` and `canton`; if you need the full reasoning to write the summary, call `fetch_document(id)` with the hit's `id` (the text can be very long — use it only for the one matching decision). Fall back to `search(query, size=1)` only if the docket search finds nothing.
+1. **OpenCaseLaw tools** (`swiss-caselaw`; richest source, has built-in verification): call `cite` with the reference to confirm it exists and get the canonical citation string. If it resolves, call `get_case_brief` (or `get_decision` + `get_regeste` if `get_case_brief` is unavailable) to retrieve the actual facts, considerations, and holding.
+2. **entscheidsuche tools** (official Swiss court-decision search): if the reference looks cantonal, or step 1 did not resolve, call `search_by_case_number(case_number, size=1)` with the docket as given. Only accept a hit whose docket actually matches the one requested. The hit gives `abstract`, `decision_date`, `court` and `canton`; if you need the full reasoning to write the summary, call `fetch_document(id)` with the hit's `id` (the text can be very long — use it only for the one matching decision). Fall back to `search(query, size=1)` only if the docket search finds nothing.
 
 Use whichever of the two servers responds successfully; you do not need to query both once one produces verified, verbatim content.
 
 ## 4. Mode B — fetch the specific consideration
 
-Call `swiss-caselaw`'s `get_erwaegung(decision_id, e_number)` directly with the citation as `decision_id` and the detected number as `e_number` (the tool strips a leading "E." itself). This single call both verifies the decision/paragraph exist and returns the verbatim text — no separate `cite` step is needed first.
+Call `get_erwaegung(decision_id, e_number)` directly with the citation as `decision_id` and the detected number as `e_number` (the tool strips a leading "E." itself). This single call both verifies the decision/paragraph exist and returns the verbatim text — no separate `cite` step is needed first.
 
 If the requested `e_number` doesn't exist but the tool returns sibling numbers, you may mention the available siblings in one short sentence — but never substitute a different paragraph's text for the one requested.
 
 ## 5. Mode C — verify the claim
 
-1. Call `swiss-caselaw`'s `check_claim_support(claim, decision_id, pinpoint?)` — `claim` is the proposition stated or implied by the user (rephrase it as a clean, self-contained sentence if the user's phrasing is informal or embedded in a longer message), `decision_id` is the citation, and `pinpoint` is the `e_number` if one was detected in step 2 (omit `pinpoint` if none was given — the tool then checks against the Regeste or opening text).
+1. Call `check_claim_support(claim, decision_id, pinpoint?)` — `claim` is the proposition stated or implied by the user (rephrase it as a clean, self-contained sentence if the user's phrasing is informal or embedded in a longer message), `decision_id` is the citation, and `pinpoint` is the `e_number` if one was detected in step 2 (omit `pinpoint` if none was given — the tool then checks against the Regeste or opening text).
 2. If that call succeeds, also call `get_decision(decision_id, full_text=false)` (or reuse data already available) purely to obtain the decision's date and court name for the metadata table — this is a lightweight metadata-only call, not a second verification.
 
 ## 6. If nothing resolves (any mode)

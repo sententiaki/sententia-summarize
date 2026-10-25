@@ -5,8 +5,8 @@
       "url": "https://mcp.entscheidsuche.ch/mcp"
     },
     "swiss-caselaw": {
-      "type": "sse",
-      "url": "https://mcp.opencaselaw.ch"
+      "type": "http",
+      "url": "https://mcp.opencaselaw.ch/mcp"
     }
   }
 }
